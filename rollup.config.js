@@ -22,7 +22,11 @@ export default {
       file: pkg.module,
       format: 'es',
       exports: 'named',
-      sourcemap: true
+      sourcemap: true,
+      globals: {
+        'react': 'React',
+        'react-dom': 'ReactDOM'
+      },      
     }
   ],
   plugins: [
@@ -37,6 +41,6 @@ export default {
       rollupCommonJSResolveHack: true,
       clean: true
     }),
-    commonjs()
+    commonjs(),
   ]
 }

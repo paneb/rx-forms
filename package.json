@@ -1,7 +1,7 @@
 {
-  "name": "paneb-lib-test",
-  "version": "1.0.3",
-  "description": "test lib",
+  "name": "rx-forms",
+  "version": "2.0.0",
+  "description": "dynamic forms lib",
   "author": "fcabras",
   "license": "MIT",
   "repository": "fcabras/rx-core",
