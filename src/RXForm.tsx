@@ -4,7 +4,8 @@ import { renderLayout } from './layouts'
 interface RXFormsProps {
   layouts: { String: any },
   components: { String: any },
-  model: any
+  model: any,
+  handleChange?(x: any): any
 }
 
 interface IRXFormState {
@@ -20,9 +21,14 @@ const RXForm: React.FC<RXFormsProps> = (props) => {
   const model = props.model;
 
   const [state, setState] = React.useState<IRXFormState>({});
+
+  if (props.handleChange) {
+    props.handleChange(state);
+  }
+
   // const [layouts] = React.useState(props.layouts);
   // const [model] = React.useState(props.model);
-
+  // console.log(state);
   return (
     <>
       <RXFormContext.Provider value={[state, setState]}>
