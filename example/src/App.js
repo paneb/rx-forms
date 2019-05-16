@@ -12,7 +12,13 @@ const BasicLayout = (props) => {
           {props.model.groups.map((input, index)=>(
             <fieldset key={`${index}`}>
               <label htmlFor={`${input.name}`}>{input.label}</label>
-              <input type={`${input.type}`} name={`${input.name}`} id={`${input.name}`}></input>
+              {props.components[input.type] != undefined ? (
+                <div>
+                  {props.components[input.type]()}
+                </div>
+              ):(
+                <input type={`${input.type}`} name={`${input.name}`} id={`${input.name}`}></input>
+              )}
             </fieldset>
           ))}
         </form>

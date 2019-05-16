@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { renderLayout} from './layouts'
+import * as React from 'react';
+import { renderLayout} from './layouts';
 
 interface RXFormsProps {
   layouts:{String: any},
@@ -12,6 +12,8 @@ export const RXForm: React.FC<RXFormsProps> = (props) => {
   const layouts = props.layouts;
   const components = props.components;
   const model = props.model;
+
+  // const renderedComponents:{String: any} = renderComponents(model, components);
   // const [layouts] = React.useState(props.layouts);
   // const [model] = React.useState(props.model);
 

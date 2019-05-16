@@ -10,7 +10,7 @@ export const renderLayout: React.SFC<{model:any, layouts:{String:any}, component
         const Layout = props.layouts['default']
 
         return (
-            <Layout model={props.model} />
+            <Layout model={props.model} components={props.components} />
         )
     }
 }
