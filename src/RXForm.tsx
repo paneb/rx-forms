@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useImperativeHandle} from 'react';
+
 import { combineReducers, createStore, AnyAction } from 'redux'
 // import { Provider } from 'react-redux'
 import { renderLayout} from './layouts';
@@ -35,11 +37,22 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer)
 
-export const RXForm: React.FC<RXFormsProps> = (props) => {
+export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props, ref) => {
 
   const layouts = props.layouts;
   const components = props.components;
   const model = props.model;
+
+  useImperativeHandle(ref, () => ({
+    test: () => {
+      console.log(`called test`);
+      return {test: "pippo"}
+    },
+    submit: () => {
+      console.log(`in submit call`);
+      return store.getState().values;
+    }
+  }));
 
   React.useEffect(()=>{
 
@@ -60,4 +73,4 @@ export const RXForm: React.FC<RXFormsProps> = (props) => {
       {renderLayout({layouts, components, model, store})}
     </>
   );
-}
+});

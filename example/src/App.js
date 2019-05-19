@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 
 import { RXForm, setValueAction } from 'rx-core';
 
@@ -119,9 +119,21 @@ const model = {
 }
 
 export const App = () => {
+
+    // const [formRef, setFormRef] = useState(null)
+    const form = useRef(null);
+    const onButtonClick = () => {
+      // `current` points to the mounted text input element
+      console.log(`in click with: `, form.current.submit());
+    };
+    // var form = null;
+    useEffect(()=>{
+      console.log(`with form: `, form);
+    },[])
     return (
       <div className="App">
-        <RXForm 
+        <RXForm
+          ref={form}
           layouts={layouts} 
           components={components} 
           model={model}
@@ -131,6 +143,7 @@ export const App = () => {
             email: "francesco.cabras@gmail.com"
           }}
         />
+        <button onClick={onButtonClick}>Get Values</button>
       </div>
       
     );
