@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux'
-import { RXForm, rootReducer, injectDataToComponent } from 'rx-core';
-import { createStore } from 'redux'
+import React, { useState, useEffect} from 'react';
 
+import { RXForm, setValueAction } from 'rx-core';
 
 const BasicLayout = (props) => {
-
   return (
     <div>
       <span style={{color: 'lightgray'}}>RXForm placeholder</span>
 
       <div style={{backgroundColor: "#eeeeee", margin: 20, padding: 20, width: "calc(100% - 20)"}}>
         <form>
-          {props.model.groups.map((input, index)=>{
-
-            var Component = injectDataToComponent(props.components[input.type])
-
-            return (
+          {props.model.groups.map((input, index)=> {
           
+          const Component = props.components[input.type];
+
+          return (
             <fieldset key={`${index}`}>
               <label htmlFor={`${input.name}`}>{input.label}</label>
               {props.components[input.type] !== undefined ? (
                 <div>
-                  <Component model={input}/>
+                  {/* {props.components[input.type]({model: input, store: props.store})} */}
+                  <Component model={input} store={props.store} />
                 </div>
               ):(
                 <input type={`${input.type}`} name={`${input.name}`} id={`${input.name}`}></input>
@@ -36,23 +33,62 @@ const BasicLayout = (props) => {
 }
 
 const CustomTextComponent = (props) => {
-
-  console.log(`customText: `, props);
   return (
     <div>CustomTextComponent</div>
   )
+}
+
+class ClassTextComponent extends React.Component {
+
+  componentDidMount = () => {
+    console.log(`in componentDidMount`)
+    const unsub = this.props.store.subscribe(()=>{
+
+      console.log(`receive event`);
+    });
+    console.log(`unsub `, unsub);
+  }
+
+  render(){
+    return (
+      <React.Fragment>
+        <div>Basic: </div> 
+        <input type={`${this.props.model.type}`} name={`${this.props.model.name}`} id={`${this.props.model.name}`} value={"xx"} onChange={(e) => {}}></input>
+      </React.Fragment>
+    )
+  }
 }
 
 const BasicTextComponent = (props) => {
 
   const [value, setValue] = useState("");
 
+  // const [sub, setSub] = useState(null);
+
+  useEffect(()=>{
+
+      // console.log(`in useEffect with store `, props.store);
+      const unsubscribe = props.store.subscribe(()=>{
+  
+        const state = props.store.getState();
+        console.log(`receive event effect`, state);
+        setValue(state.values[props.model.name])
+      });
+      // console.log('after sub', unsubscribe);
+
+    return ()=>{
+      unsubscribe();
+      console.log(`after unsubscribe`);
+    }
+  }, [])
+
   const componentSetValue = (value) => {
-    console.log(`in component set value`, value)
+    console.log(`in component set value`)
     setValue(value);
-    props.setValue(props.model.name, value);
+    props.store.dispatch(setValueAction(props.model.name, value));
   }
 
+  console.log(`in render for `, props.model.name);
   return (
     <React.Fragment>
       <div>Basic: </div> 
@@ -67,23 +103,20 @@ const layouts = {
 
 const components = {
   customText: CustomTextComponent,
-  text: BasicTextComponent
+  text: BasicTextComponent,
+  classText: ClassTextComponent
 }
 
 const model = {
   groups: [
     {name: "name", type: "text", label: "Nome:"},
     {name: "surname", type: "text", label: "Cognome:"},
-    {name: "email", type: "customText", label: "Email Address:"},
+    {name: "email", type: "text", label: "Email Address:"},
   ],
   buttons: [
     {name: "submit", type: "submit", label: "Invia"}
   ]
 }
-
-const context = React.createContext();
-
-const store = createStore(rootReducer)
 
 export const App = () => {
     return (
@@ -92,14 +125,13 @@ export const App = () => {
           layouts={layouts} 
           components={components} 
           model={model}
-          store={store}
+          data={{
+            name: "Francesco",
+            surname: "Cabras",
+            email: "francesco.cabras@gmail.com"
+          }}
         />
-        <div 
-          style={{marginLeft: 'auto', marginRight: 'auto', fontSize: 24, width:200, height: 50, backgroundColor: 'black', color: 'white'}}
-          onClick={()=>{
-            console.log(`in onClick with store: `, store.getState("data"));
-          }} 
-        >SUBMIT</div>
       </div>
+      
     );
 };
