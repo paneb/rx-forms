@@ -1,2 +1,2 @@
-export {RXForm} from './RXForm'
+export {RXForm, useFocus } from './RXForm'
 export {setValue as setValueAction } from './actions'

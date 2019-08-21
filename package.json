@@ -22,10 +22,12 @@
     "deploy": "gh-pages -d example/build"
   },
   "dependencies": {
-    "@types/react-redux": "^7.0.9",
+    "@types/react-redux": "^7.1.1",
+    "immutability-helper": "^3.0.1",
     "lodash": "^4.17.11",
-    "react-redux": "^7.0.3",
-    "redux": "^4.0.1"
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.1",
+    "rollup-plugin-typescript3": "^1.1.2"
   },
   "peerDependencies": {
     "prop-types": "^15.5.4",
@@ -52,9 +54,8 @@
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-postcss": "^1.6.2",
     "rollup-plugin-serve": "^1.0.1",
-    "rollup-plugin-typescript2": "^0.17.0",
     "rollup-plugin-url": "^1.4.0",
-    "typescript": "^2.8.3"
+    "typescript": "3.5"
   },
   "files": [
     "dist"

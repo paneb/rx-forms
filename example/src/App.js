@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef} from 'react';
 
-import { RXForm, setValueAction } from 'rx-core';
+import { RXForm, setValueAction, useFocus } from 'rx-core';
 
 const BasicLayout = (props) => {
   return (
@@ -63,6 +63,9 @@ const BasicTextComponent = (props) => {
 
   const [value, setValue] = useState("");
 
+  const ref = useRef();
+  const focused = useFocus(ref, props.model.name, props.store, props.model.validators ? props.model.validators : []);
+
   // const [sub, setSub] = useState(null);
 
   useEffect(()=>{
@@ -79,20 +82,20 @@ const BasicTextComponent = (props) => {
     return ()=>{
       unsubscribe();
       console.log(`after unsubscribe`);
-    }
+    } 
   }, [])
 
   const componentSetValue = (value) => {
-    console.log(`in component set value`)
+    console.log(`in component set value with ${value}`)
     setValue(value);
     props.store.dispatch(setValueAction(props.model.name, value));
-  }
+  } 
 
-  console.log(`in render for `, props.model.name);
+  console.log(`in render2 for `, props.model.name);
   return (
     <React.Fragment>
       <div>Basic: </div> 
-      <input type={`${props.model.type}`} name={`${props.model.name}`} id={`${props.model.name}`} value={value} onChange={(e) => componentSetValue(e.target.value)}></input>
+      <input ref={ref} type={`${props.model.type}`} name={`${props.model.name}`} id={`${props.model.name}`} value={value} onChange={(e) => componentSetValue(e.target.value)}></input>
     </React.Fragment>
   )
 }
@@ -107,9 +110,34 @@ const components = {
   classText: ClassTextComponent
 }
 
+const BasicValidator = (value, name) => {
+  return {result: true, error: "BasicValidator"}
+}
+
+const FailValidator = (value, name) => {
+  return {result: false, error: "FailValidator"}
+}
+
+const FailValidator2 = (value, name) => {
+  if(value != "Francesco"){
+    return {result: false, error: "FailValidator2"}
+
+  }else{
+    return {result: true}
+
+  }
+}
+
+const validators = {
+  basic: BasicValidator,
+  fail: FailValidator,
+  fail2: FailValidator2,
+
+}
+
 const model = {
   groups: [
-    {name: "name", type: "text", label: "Nome:"},
+    {name: "name", type: "text", label: "Nome:", validators: ["basic", "fail", "fail2"]},
     {name: "surname", type: "text", label: "Cognome:"},
     {name: "email", type: "text", label: "Email Address:"},
   ],
@@ -122,10 +150,20 @@ export const App = () => {
 
     // const [formRef, setFormRef] = useState(null)
     const form = useRef(null);
+    const[store, setStore] = useState(null);
+    const [errors, setErrors] = useState([]);
     const onButtonClick = () => {
       // `current` points to the mounted text input element
       console.log(`in click with: `, form.current.submit());
     };
+
+    useEffect(()=>{
+
+      console.log(`form current: `, form.current);
+      setStore(form.current.store.getState().errors)
+
+    }, []);
+
     // var form = null;
     useEffect(()=>{
       console.log(`with form: `, form);
@@ -142,8 +180,20 @@ export const App = () => {
             surname: "Cabras",
             email: "francesco.cabras@gmail.com"
           }}
+          validators={validators}
+          onValidation={(errors)=>{
+            console.log(`in onValidation: `, JSON.stringify(errors));
+            setErrors(errors);
+          }}
+          onValuesChange={(values)=>{
+            console.log('in onValuesChange: ', values);
+          }}
         />
         <button onClick={onButtonClick}>Get Values</button>
+        <div>
+          <p>Errors: {errors ? JSON.stringify(errors) : ""}</p>
+          
+        </div>
       </div>
       
     );
