@@ -6,7 +6,7 @@ import { combineReducers, createStore, AnyAction } from 'redux'
 import { renderLayout} from './layouts';
 import { setValue} from './actions';
 import update from 'immutability-helper';
-import { useDispatch, Provider, useSelector } from 'react-redux'
+import { useDispatch, Provider } from 'react-redux';
 
 interface RXFormsProps {
   layouts:{String: any},
