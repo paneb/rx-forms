@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef} from 'react';
+//import { connect } from 'react-redux'
+import { RXForm, rootReducer, injectDataToComponent } from 'rx-core';
+import { createStore } from 'redux'
 
-import { RXForm, setValueAction, useFocus } from 'rx-core';
+import { setValueAction, useFocus } from 'rx-core';
 
 const BasicLayout = (props) => {
   return (
@@ -147,6 +150,7 @@ const model = {
 }
 
 export const App = () => {
+// const context = React.createContext();
 
     // const [formRef, setFormRef] = useState(null)
     const form = useRef(null);
