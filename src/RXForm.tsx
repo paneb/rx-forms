@@ -3,17 +3,19 @@ import { useImperativeHandle} from 'react';
 
 import { combineReducers, createStore, AnyAction } from 'redux'
 // import { Provider } from 'react-redux'
-import { renderLayout} from './layouts';
+import { renderLayout, BasicLayout, BasicForm} from './layouts';
+import { BasicInputComponent } from './components';
 import { setValue} from './actions';
 import update from 'immutability-helper';
 import { useDispatch, Provider } from 'react-redux';
 
 interface RXFormsProps {
-  layouts:{String: any},
-  components: {String: any},
+  layouts: any,
+  formComponent: any,
+  components: any,
   model: any,
   data: {String: any},
-  validators: {String: any},
+  validators: any,
   onValidation: (errors: any) => null,
   onValuesChange: (values: any) => null
 }
@@ -42,7 +44,7 @@ export const currentValuesReducer = (state: any = {}, action: AnyAction) => {
   return state;
 }
 
-const validatorReducerWithValidator = (validators: {String: any}) => {
+const validatorReducerWithValidator = (validators: any) => {
 
   console.log(`set validatorReducer with`, validators);
 
@@ -113,24 +115,48 @@ export const useFocus = (ref: any, name: String, store:any, validators: [String]
   return state;
 };
 
+const baseLayouts = {
+  default: BasicLayout
+}
+
+const baseComponents = {
+  default: BasicInputComponent
+}
+
+const baseValidators = {
+
+}
+
 export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsProps, ref: ReactRef) => {
 
-  const layouts = props.layouts;
-  const components = props.components;
+  const layouts = props.layouts ? update(baseLayouts, {$merge: props.layouts}) : baseLayouts;
+  const components = props.components ? update(baseComponents, {$merge: props.components}) : baseComponents;
   const model = props.model;
+  const formComponent = props.formComponent ? props.formComponent : BasicForm;
+  const validators = props.validators ? update(baseValidators, {$merge: props.validators}) : baseValidators;
   var store: any = null;
   //Make store once
   // const ref = useRef();
-  console.log(`ref current: `, ref.current);
+
+  var ref = ref;
+  console.log(`ref: `, ref);
+  if (!ref){
+    ref = React.createRef();
+  }
+
   if (ref && !ref.current){
+
     ref.current = {};
   }
+
+  console.log(`ref current: `, ref.current);
+
   if (ref && ref.current && !ref.current.store){
 
     const rootReducer = combineReducers({
       values: currentValuesReducer,
       initialValues: initialValuesReducer,
-      errors: validatorReducerWithValidator(props.validators)
+      errors: validatorReducerWithValidator(validators)
     });
     
     ref.current.store = createStore(rootReducer)
@@ -188,7 +214,7 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   return (
     <>
       <Provider store={ref.current.store}>
-        {renderLayout({layouts, components, model, store})}
+        {renderLayout({layouts, formComponent, components, model, store})}
       </Provider>
     </>
   );
