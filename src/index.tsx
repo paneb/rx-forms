@@ -1,3 +1,2 @@
-export {RXForm, rootReducer} from './RXForm'
-export {setValue} from './actions'
-export {injectDataToComponent} from './components'
+export {RXForm, useFocus } from './RXForm'
+export {setValue as setValueAction } from './actions'
