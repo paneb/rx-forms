@@ -1,18 +1,23 @@
 import * as React from 'react';
-import { useImperativeHandle} from 'react';
+import { useImperativeHandle, useState, useRef, useEffect} from 'react';
 
 import { combineReducers, createStore, AnyAction } from 'redux'
 // import { Provider } from 'react-redux'
-import { renderLayout, BasicLayout, BasicForm} from './layouts';
+import { renderLayout, BasicLayout, BasicForm, BasicButtons} from './layouts';
 import { BasicInputComponent } from './components';
-import { setValue} from './actions';
+import { setValue as setValueAction} from './actions';
+
 import update from 'immutability-helper';
 import { useDispatch, Provider } from 'react-redux';
+
+var lo = require('lodash');
 
 interface RXFormsProps {
   layouts: any,
   formComponent: any,
   components: any,
+  buttonsComponent: any,
+  events: any,
   model: any,
   data: {String: any},
   validators: any,
@@ -89,9 +94,41 @@ const validatorReducerWithValidator = (validators: any) => {
 
 // const store = createStore(rootReducer)
 
+export const useRXInput = (store: any, model: any)=>{
+
+  const ref = useRef();
+
+  const [value, setValue] = useState("");
+
+  useEffect(()=>{
+
+      const unsubscribe = store.subscribe(()=>{
+  
+        const state = store.getState();
+        console.log(`receive event effect`, state);
+        setValue(state.values[model.name])
+      });
+
+    return ()=>{
+      unsubscribe();
+      console.log(`after unsubscribe`);
+    } 
+  }, [])
+
+  const componentSetValue = (value:any) => {
+    console.log(`in component set value with ${value}`)
+    setValue(value);
+    store.dispatch(setValueAction(model.name, value));
+  }
+
+  return [value, componentSetValue, ref]
+}
+
 export const useFocus = (ref: any, name: String, store:any, validators: [String], defaultState = false) => {
   const [state, setState] = React.useState(defaultState);
   const dispatch = useDispatch();
+
+  console.log(`with ref: `, ref);
 
   React.useEffect(() => {
     // const onFocus = () => {
@@ -127,6 +164,10 @@ const baseValidators = {
 
 }
 
+const baseEvents = {
+  onButtonPress: (_e:any, _name:String)=>{}
+}
+
 export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsProps, ref: ReactRef) => {
 
   const layouts = props.layouts ? update(baseLayouts, {$merge: props.layouts}) : baseLayouts;
@@ -134,6 +175,10 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   const model = props.model;
   const formComponent = props.formComponent ? props.formComponent : BasicForm;
   const validators = props.validators ? update(baseValidators, {$merge: props.validators}) : baseValidators;
+  const buttonsComponent = props.buttonsComponent ? props.buttonsComponent : BasicButtons;
+
+  const events = props.events ? update(baseEvents, {$merge: props.events}) : baseEvents;
+
   var store: any = null;
   //Make store once
   // const ref = useRef();
@@ -188,8 +233,19 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   React.useEffect(()=>{
 
     console.log('check initial values: ', JSON.stringify(props));
-    Object.keys(props.data).map((key)=>{
-      store.dispatch(setValue(key, props.data[key]));
+
+    //Extract field from model
+    const baseFieldNames = props.model.groups.map((field: any, _index:number)=>{
+      return [field.name, ""]
+    })
+    console.log(`baseFieldNames: `, baseFieldNames);
+    const baseFields = lo.fromPairs(baseFieldNames);
+    const fields = update(baseFields, {$merge: props.data});
+
+    console.log(`found initial fields: `, fields);
+
+    Object.keys(fields).map((key)=>{
+      store.dispatch(setValueAction(key, fields[key]));
     });
 
     const unsubscribe = store.subscribe(()=>{
@@ -214,7 +270,7 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   return (
     <>
       <Provider store={ref.current.store}>
-        {renderLayout({layouts, formComponent, components, model, store})}
+        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, store})}
       </Provider>
     </>
   );

@@ -1,6 +1,8 @@
 import * as React from 'react'
 
-export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any, components:any, store: any}> = (props) => {
+export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any, components:any, buttonsComponent:any, events: any, store: any}> = (props) => {
+
+    const ButtonsComponent = props.buttonsComponent;
 
     if(props.layouts['default'] == undefined){
         return (
@@ -16,6 +18,7 @@ export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any,
             return (
                 <FormComponent>
                     <Layout model={props.model} components={props.components} store={props.store} />
+                    <ButtonsComponent model={props.model} events={props.events}/>
                 </FormComponent>    
             )
     
@@ -24,12 +27,26 @@ export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any,
             return (
                 <form>
                     <Layout model={props.model} components={props.components} store={props.store} />
+                    <ButtonsComponent model={props.model} events={props.events}/>
                 </form>
             )
     
         }
 
     }
+}
+
+export const BasicButtons: React.SFC<any> = (props) => {
+
+  const buttons = props.model.buttons;
+  console.log(`found buttons: `, buttons);
+  return (
+    <React.Fragment>
+      {buttons.map((button:any, index: number)=>{
+        return <input key={index} type={`${button.type}`} value={`${button.label}`} onClick={(e:any)=>{e.preventDefault(); props.events.onButtonPress(e, button.name);}} />
+      })}
+    </React.Fragment>
+  )
 }
 
 export const BasicLayout: React.SFC<any> = (props) => {
