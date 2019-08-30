@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useImperativeHandle, useState, useRef, useEffect} from 'react';
+import { useImperativeHandle} from 'react';
 
-import { combineReducers, createStore, AnyAction } from 'redux'
-// import { Provider } from 'react-redux'
-import { renderLayout, BasicLayout, BasicForm, BasicButtons} from './layouts';
-import { BasicInputComponent } from './components';
+import { combineReducers, createStore } from 'redux'
+import { renderLayout, BasicForm, BasicButtons} from './layouts';
 import { setValue as setValueAction} from './actions';
+import {validatorReducerWithValidator, initialValuesReducer, currentValuesReducer} from './reducers';
 
 import update from 'immutability-helper';
-import { useDispatch, Provider } from 'react-redux';
+import { Provider } from 'react-redux';
+import { baseLayouts, baseComponents, baseValidators, baseEvents } from "./default"
 
 var lo = require('lodash');
 
@@ -21,151 +21,10 @@ interface RXFormsProps {
   model: any,
   data: {String: any},
   validators: any,
-  onValidation: (errors: any) => null,
-  onValuesChange: (values: any) => null
 }
 
 interface ReactRef {
   current: any
-}
-
-
-
-export const firstNamedReducer = (state = 1) => state
-export const initialValuesReducer = (state: any = {}, action: AnyAction) => {
-  console.log(`in state: `, state, ` with action: `, action);
-  if(action.type == "INITIAL_VALUE"){
-    return update(state ? state : {}, {[action.key]: {$set: action.value}})
-  }
-  return state;
-}
-
-
-export const currentValuesReducer = (state: any = {}, action: AnyAction) => {
-  console.log(`in state: `, state, ` with action: `, action);
-  if(action.type == "SET_VALUE"){
-    return update(state ? state : {}, {[action.key]: {$set: action.value}})
-  }
-  return state;
-}
-
-const validatorReducerWithValidator = (validators: any) => {
-
-  console.log(`set validatorReducer with`, validators);
-
-  const validationReducer = (state: any = {}, action: AnyAction) => {
-    console.log(`in validation reducer with `, JSON.stringify(action));
-    if(action.type == "VALIDATION"){
-      console.log(`in validation reducer with name: ${action.name}, value: ${action.value} and validators list: ${action.validators}`);
-
-      var errors = [];
-      for (const validator of action.validators){
-        
-        if(validators[validator] != undefined){
-          const validationState = validators[validator](action.value, action.name);
-
-          if(!validationState.result){
-            console.log(`validation error`);
-            errors.push(validationState.error);
-          }else{
-            console.log(`valid`);
-          }
-        }
-      }
-      if(errors.length>0){
-        return update(state ? state: {}, {[action.name] : {$set : errors}});
-      }else{
-        return update(state ? state: {}, {});
-      }
-    }
-    return state;
-  }
-
-  return validationReducer;
-  
-}
-
-
-// const rootReducer = combineReducers({
-//   values: currentValuesReducer,
-//   initialValues: initialValuesReducer,
-//   errors: validationReducer
-// });
-
-// const store = createStore(rootReducer)
-
-export const useRXInput = (store: any, model: any)=>{
-
-  const ref = useRef();
-
-  const [value, setValue] = useState("");
-
-  useEffect(()=>{
-
-      const unsubscribe = store.subscribe(()=>{
-  
-        const state = store.getState();
-        console.log(`receive event effect`, state);
-        setValue(state.values[model.name])
-      });
-
-    return ()=>{
-      unsubscribe();
-      console.log(`after unsubscribe`);
-    } 
-  }, [])
-
-  const componentSetValue = (value:any) => {
-    console.log(`in component set value with ${value}`)
-    setValue(value);
-    store.dispatch(setValueAction(model.name, value));
-  }
-
-  return [value, componentSetValue, ref]
-}
-
-export const useFocus = (ref: any, name: String, store:any, validators: [String], defaultState = false) => {
-  const [state, setState] = React.useState(defaultState);
-  const dispatch = useDispatch();
-
-  console.log(`with ref: `, ref);
-
-  React.useEffect(() => {
-    // const onFocus = () => {
-    //   console.log(`in onFocus`); setState(true);
-    //   dispatch({ type: 'focus-event' });
-    // }
-
-    const onBlur = () => {
-      console.log(`in onBlur`); setState(false);
-      dispatch({ type: 'VALIDATION', name: name, value: store.getState().values[name.toString()], validators: validators });
-    }
-    // ref.current.addEventListener("focus", onFocus);
-    ref.current.addEventListener("blur", onBlur);
- 
-    return () => {
-      // ref.current.removeEventListener("focus", onFocus);
-      ref.current.removeEventListener("blur", onBlur);
-    };
-  }, []);
-
-  return state;
-};
-
-const baseLayouts = {
-  default: BasicLayout
-}
-
-const baseComponents = {
-  default: BasicInputComponent
-}
-
-const baseValidators = {
-
-}
-
-const baseEvents = {
-  onButtonPress: (_e:any, _name:String)=>{}
 }
 
 export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsProps, ref: ReactRef) => {
@@ -251,8 +110,8 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
     const unsubscribe = store.subscribe(()=>{
 
       console.log(`in store events with `, JSON.stringify(store.getState()));
-      props.onValidation(store.getState().errors);
-      props.onValuesChange(store.getState().values);
+      events.onValidation(store.getState().errors);
+      events.onValuesChange(store.getState().values);
     });
 
     return () => {
@@ -263,14 +122,10 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
 
   }, [])
 
-  // const renderedComponents:{String: any} = renderComponents(model, components);
-  // const [layouts] = React.useState(props.layouts);
-  // const [model] = React.useState(props.model);
-
   return (
     <>
       <Provider store={ref.current.store}>
-        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, store})}
+        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, validators, store})}
       </Provider>
     </>
   );

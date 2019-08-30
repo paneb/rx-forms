@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any, components:any, buttonsComponent:any, events: any, store: any}> = (props) => {
+export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any, components:any, validators:any, buttonsComponent:any, events: any, store: any}> = (props) => {
 
     const ButtonsComponent = props.buttonsComponent;
 
@@ -17,7 +17,7 @@ export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any,
 
             return (
                 <FormComponent>
-                    <Layout model={props.model} components={props.components} store={props.store} />
+                    <Layout model={props.model} components={props.components} store={props.store} validators={props.validators}/>
                     <ButtonsComponent model={props.model} events={props.events}/>
                 </FormComponent>    
             )
@@ -26,7 +26,7 @@ export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any,
 
             return (
                 <form>
-                    <Layout model={props.model} components={props.components} store={props.store} />
+                    <Layout model={props.model} components={props.components} store={props.store} validators={props.validators}/>
                     <ButtonsComponent model={props.model} events={props.events}/>
                 </form>
             )
