@@ -17,7 +17,7 @@ export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any,
 
             return (
                 <FormComponent>
-                    <Layout model={props.model} components={props.components} store={props.store} validators={props.validators}/>
+                    <Layout model={props.model} events={props.events} components={props.components} store={props.store} validators={props.validators}/>
                     <ButtonsComponent model={props.model} events={props.events}/>
                 </FormComponent>    
             )
@@ -59,7 +59,7 @@ export const BasicLayout: React.SFC<any> = (props) => {
   
             return (
               <div key={`${index}`}>
-                <label htmlFor={`${input.name}`}>{input.label}</label>
+                <label htmlFor={`${input.name}`}>{props.events.onLocalize(input.label)}</label>
                     <div>
                         <Component model={input} store={props.store} />
                     </div>
