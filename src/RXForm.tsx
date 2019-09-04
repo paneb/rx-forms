@@ -37,7 +37,6 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   const buttonsComponent = props.buttonsComponent ? props.buttonsComponent : BasicButtons;
 
   const events = props.events ? update(baseEvents, {$merge: props.events}) : baseEvents;
-
   var store: any = null;
   //Make store once
   // const ref = useRef();

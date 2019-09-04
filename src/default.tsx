@@ -18,5 +18,5 @@ export const baseEvents = {
     onButtonPress: (_e:any, _name:String)=>{},
     onValidation: (_errors:any)=>{},
     onValuesChange: (_values:any)=>{},
-    onLocalization: (value: any, _params: any)=>return _value
+    onLocalize: (value: any, _params: any)=> value
 }

@@ -14,7 +14,6 @@ export const BasicInputComponent : React.SFC<any> = (props) => {
 
   return (
     <React.Fragment>
-      <span>Basic</span>
         <input ref={ref} type={`${props.model.type}`} name={`${props.model.name}`} id={`${props.model.name}`} value={value} onChange={(e) => setValue(e.target.value)}></input>
     </React.Fragment>
   )
@@ -28,7 +27,6 @@ export const BasicNumberComponent : React.SFC<any> = (props) => {
 
   return (
     <React.Fragment>
-      <span>Basic</span>
         <input ref={ref} type={`${props.model.type}`} name={`${props.model.name}`} id={`${props.model.name}`} value={value} onChange={(e) => setNumberValue(e.target.value)}></input>
     </React.Fragment>
   )
