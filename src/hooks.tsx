@@ -9,7 +9,9 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
 
     const [value, setValue] = useState("");
     const [errors, setErrors] = useState([]);
+    const [onValidation, setOnValidation] = useState(false);
   
+    console.log(`after create errors: `, errors, ` for `, model.name);
     const verifiedValidators = model.validators ? model.validators : [];
   
     useEffect(()=>{
@@ -22,13 +24,13 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
         setErrors(state.errors[model.name]);
       });
       const onBlur = () => {
-        console.log(`in onBlur with `, store.getState().values[model.name]);
-        store.dispatch(validateAction(model.name, store.getState().values[model.name], verifiedValidators, validators))
+        console.log(`in onBlur with `, store.getState().values[model.name], ` for `, model.name);
+        store.dispatch(validateAction(model.name, store.getState().values[model.name], verifiedValidators, validators, setOnValidation))
 
       }
 
       if (ref.current && ref.current.addEventListener){
-        ref.current.addEventListener("blur", onBlur);        
+        ref.current.addEventListener("blur", onBlur);
       }
   
       return ()=>{
@@ -48,7 +50,8 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
   
     }
   
-    return [value, componentSetValue, ref, errors]
+    console.log(`before return errors: `, errors)
+    return [value, componentSetValue, ref, errors, onValidation]
   }
   
   export const useFocus = (ref: any, name: String, store:any, validators: [String], defaultState = false) => {
