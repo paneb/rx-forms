@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { setValue as setValueAction, validationAction} from './actions';
+import { setValue as setValueAction, validateAction} from './actions';
 import { useDispatch } from 'react-redux';
 
 export const useRXInput = (store: any, model: any, validators?: any, validateOnChange: boolean = false)=>{
@@ -10,7 +10,7 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
     const [value, setValue] = useState("");
     const [errors, setErrors] = useState([]);
   
-    const verifiedValidators = validators ? validators : [];
+    const verifiedValidators = model.validators ? model.validators : [];
   
     useEffect(()=>{
 
@@ -23,7 +23,7 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
       });
       const onBlur = () => {
         console.log(`in onBlur with `, store.getState().values[model.name]);
-        store.dispatch(validationAction(model.name, store.getState().values[model.name], verifiedValidators))
+        store.dispatch(validateAction(model.name, store.getState().values[model.name], verifiedValidators, validators))
 
       }
 
@@ -43,7 +43,7 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
       setValue(value);
       store.dispatch(setValueAction(model.name, value));
       if(validateOnChange){
-        store.dispatch(validationAction(model.name, value, verifiedValidators))
+        store.dispatch(validateAction(model.name, value, verifiedValidators))
       }
   
     }

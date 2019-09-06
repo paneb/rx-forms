@@ -10,7 +10,7 @@ export const renderComponents = (model:any, components:{String:any}) => {
 
 export const BasicInputComponent : React.SFC<any> = (props) => {
 
-  const [value, setValue, ref] = useRXInput(props.store, props.model);
+  const [value, setValue, ref] = useRXInput(props.store, props.model, props.validators);
 
   return (
     <React.Fragment>
@@ -21,7 +21,7 @@ export const BasicInputComponent : React.SFC<any> = (props) => {
 
 export const BasicNumberComponent : React.SFC<any> = (props) => {
 
-  const [value, setValue, ref] = useRXInput(props.store, props.model);
+  const [value, setValue, ref] = useRXInput(props.store, props.model, props.validators);
 
   const setNumberValue = (value:any)=>setValue(parseInt(value));
 

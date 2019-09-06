@@ -61,7 +61,7 @@ export const BasicLayout: React.SFC<any> = (props) => {
               <div key={`${index}`}>
                 <label htmlFor={`${input.name}`}>{props.events.onLocalize(input.label)}</label>
                     <div>
-                        <Component model={input} store={props.store} />
+                        <Component model={input} store={props.store} validators={props.validators}/>
                     </div>
               </div>
               
