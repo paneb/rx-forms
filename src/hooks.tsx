@@ -51,6 +51,7 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
     }
   
     console.log(`before return errors: `, errors)
+    // return [value, componentSetValue, ref, errors ? errors : [], onValidation]
     return [value, componentSetValue, ref, errors, onValidation]
   }
   
