@@ -18,10 +18,10 @@ export const validationAction: any = (name: String, value: any, errors:any) => {
   }
 }
 
-export const validateAction: any = (name: String, value: any, validators:any, validatorsList: any, setOnValidation: any) => {
+export const validateAction: any = (name: String, value: any, values: any, validators:any, validatorsList: any, setOnValidation: any) => {
 
 
-  const validate: any = async (name: String, value: any, validators: any, validatorsList: any, setOnValidation: any) => {
+  const validate: any = async (name: String, value: any, values: any, validators: any, validatorsList: any, setOnValidation: any) => {
 
     console.log(`in async validate`);
 
@@ -33,7 +33,7 @@ export const validateAction: any = (name: String, value: any, validators:any, va
       if(validatorsList[validator] != undefined){
   
         
-        const result = validatorsList[validator](value, name);
+        const result = validatorsList[validator](value, name, values);
         var validationState = null;
   
         if(result instanceof Promise){
@@ -64,7 +64,7 @@ export const validateAction: any = (name: String, value: any, validators:any, va
 
     return (dispatch: any) => {
 
-      validate(name, value, validators, validatorsList, setOnValidation)
+      validate(name, value, values, validators, validatorsList, setOnValidation)
       .then((errors:any)=>{
     
         console.log(`in return`)

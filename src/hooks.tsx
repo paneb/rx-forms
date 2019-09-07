@@ -25,7 +25,7 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
       });
       const onBlur = () => {
         console.log(`in onBlur with `, store.getState().values[model.name], ` for `, model.name);
-        store.dispatch(validateAction(model.name, store.getState().values[model.name], verifiedValidators, validators, setOnValidation))
+        store.dispatch(validateAction(model.name, store.getState().values[model.name], store.getState().values, verifiedValidators, validators, setOnValidation))
 
       }
 
