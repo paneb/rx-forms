@@ -19,6 +19,20 @@ export const currentValuesReducer = (state: any = {}, action: AnyAction) => {
   return state;
 }
 
+export const validationReducer = (state: any = {}, action: AnyAction) =>{
+
+  if(action.type == "VALIDATION"){
+    console.log(`in validationReducer with `, action)
+    if (action.errors.length > 0){
+      return update(state ? state: {}, {[action.name] : {$set : action.errors}});
+    }else{
+      return update(state ? state: {}, {$unset: [action.name]});
+    }
+  }
+
+  return state
+}
+
 export const validatorReducerWithValidator = (validators: any) => {
 
   console.log(`set validatorReducer with`, validators);

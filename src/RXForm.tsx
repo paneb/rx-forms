@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useImperativeHandle} from 'react';
 
-import { combineReducers, createStore } from 'redux'
 import { renderLayout, BasicForm, BasicButtons} from './layouts';
 import { setValue as setValueAction} from './actions';
-import {validatorReducerWithValidator, initialValuesReducer, currentValuesReducer} from './reducers';
+import {validationReducer, initialValuesReducer, currentValuesReducer} from './reducers';
 
 import update from 'immutability-helper';
+
+import { combineReducers, createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import { baseLayouts, baseComponents, baseValidators, baseEvents } from "./default"
 
 var lo = require('lodash');
@@ -59,19 +61,13 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
     const rootReducer = combineReducers({
       values: currentValuesReducer,
       initialValues: initialValuesReducer,
-      errors: validatorReducerWithValidator(validators)
+      errors: validationReducer
     });
     
-    ref.current.store = createStore(rootReducer)
+    ref.current.store = createStore(rootReducer, applyMiddleware(thunk))
   }
   store = ref.current.store;
   console.log(`store: `, ref.current.store);
-
-  // const test = useSelector((data: any)=>{
-  //   console.log(`in useSelector with: `, data);
-  //   return "pippo";
-  // })
-  // console.log(`withTest: `, test);
 
   useImperativeHandle(ref, () => ({
     test: () => {

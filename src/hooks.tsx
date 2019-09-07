@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { setValue as setValueAction, validationAction} from './actions';
+import { setValue as setValueAction, validateAction} from './actions';
 import { useDispatch } from 'react-redux';
 
 export const useRXInput = (store: any, model: any, validators?: any, validateOnChange: boolean = false)=>{
@@ -9,8 +9,10 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
 
     const [value, setValue] = useState("");
     const [errors, setErrors] = useState([]);
+    const [onValidation, setOnValidation] = useState(false);
   
-    const verifiedValidators = validators ? validators : [];
+    console.log(`after create errors: `, errors, ` for `, model.name);
+    const verifiedValidators = model.validators ? model.validators : [];
   
     useEffect(()=>{
 
@@ -22,13 +24,13 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
         setErrors(state.errors[model.name]);
       });
       const onBlur = () => {
-        console.log(`in onBlur with `, store.getState().values[model.name]);
-        store.dispatch(validationAction(model.name, store.getState().values[model.name], verifiedValidators))
+        console.log(`in onBlur with `, store.getState().values[model.name], ` for `, model.name);
+        store.dispatch(validateAction(model.name, store.getState().values[model.name], store.getState().values, verifiedValidators, validators, setOnValidation))
 
       }
 
       if (ref.current && ref.current.addEventListener){
-        ref.current.addEventListener("blur", onBlur);        
+        ref.current.addEventListener("blur", onBlur);
       }
   
       return ()=>{
@@ -43,12 +45,14 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
       setValue(value);
       store.dispatch(setValueAction(model.name, value));
       if(validateOnChange){
-        store.dispatch(validationAction(model.name, value, verifiedValidators))
+        store.dispatch(validateAction(model.name, value, verifiedValidators))
       }
   
     }
   
-    return [value, componentSetValue, ref, errors]
+    console.log(`before return errors: `, errors)
+    // return [value, componentSetValue, ref, errors ? errors : [], onValidation]
+    return [value, componentSetValue, ref, errors, onValidation]
   }
   
   export const useFocus = (ref: any, name: String, store:any, validators: [String], defaultState = false) => {
