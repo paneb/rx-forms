@@ -45,7 +45,7 @@ export const useRXInput = (store: any, model: any, validators?: any, validateOnC
       setValue(value);
       store.dispatch(setValueAction(model.name, value));
       if(validateOnChange){
-        store.dispatch(validateAction(model.name, value, verifiedValidators))
+        store.dispatch(willValidateAction(model.name, value, verifiedValidators))
       }
   
     }

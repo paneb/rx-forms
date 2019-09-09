@@ -28,7 +28,9 @@ export const validationReducer = (state: any = {}, action: AnyAction) =>{
     }else{
       return update(state ? state: {}, {$unset: [action.name]});
     }
-  }else if(action.type == "ALL_FIELD_VALIDATION");
+  }else if(action.type == "ALL_FIELD_VALIDATION"){
+    return update(state ? state: {}, {$set: action.errors});
+  }
 
   return state
 }

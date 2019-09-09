@@ -75,12 +75,24 @@ export const willValidateAction: any = (name: String, value: any, values: any, v
 
 }
 
-const willValidateAllAction: any = (model: any, validators: any, values: any) => {
+export const willValidateAllAction: any = (model: any, validatorsList: any, values: any) => {
 
-  lo.map(values, (value, index, values)=>{
+  const errors = lo.map(values, async (value: any, key: any, values: any)=>{
 
-    await doSingleFieldValidation(name, value, values, validators, validatorsList, setOnValidation)
+    console.log(`with value: `, value, ` and key: `, key);
+    //TODO: models.groups is a list, not an object.
+
+    const fieldValidator = model.groups[key].validators ? model.groups[key].validators : [];
+    const fieldErrors =  await doSingleFieldValidation(key, value, values, fieldValidator, validatorsList, false)
+    return {[value.name]: fieldErrors}
+
   })
+
+  return (dispatch: any) => {
+
+    dispatch(didValidateAllAction(values, errors));
+  }
+
 }
 
 const didValidateAllAction: any = (values: any, errors: any) => {

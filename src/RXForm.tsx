@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useImperativeHandle} from 'react';
 
 import { renderLayout, BasicForm, BasicButtons} from './layouts';
-import { setValueAction} from './actions';
-import {validationReducer, initialValuesReducer, currentValuesReducer} from './reducers';
+import { setValueAction, willValidateAllAction} from './actions';
+import {validationReducer, currentValuesReducer} from './reducers';
 
 import update from 'immutability-helper';
 
@@ -78,7 +78,7 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
       console.log(`in submit call`);
 
       if(validate){
-        store.dispatch()
+        store.dispatch(willValidateAllAction(model, validators, store.getState().values))
       }
       return {
         values: store.getState().values,
