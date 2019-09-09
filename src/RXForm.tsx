@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useImperativeHandle} from 'react';
 
 import { renderLayout, BasicForm, BasicButtons} from './layouts';
-import { setValue as setValueAction} from './actions';
+import { setValueAction} from './actions';
 import {validationReducer, initialValuesReducer, currentValuesReducer} from './reducers';
 
 import update from 'immutability-helper';
@@ -60,7 +60,7 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
 
     const rootReducer = combineReducers({
       values: currentValuesReducer,
-      initialValues: initialValuesReducer,
+      // initialValues: initialValuesReducer,
       errors: validationReducer
     });
     
@@ -74,8 +74,12 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
       console.log(`called test`); 
       return {test: "pippo"}
     },
-    submit: () => {
+    submit: (validate = false) => {
       console.log(`in submit call`);
+
+      if(validate){
+        store.dispatch()
+      }
       return {
         values: store.getState().values,
         errors: store.getState().errors
