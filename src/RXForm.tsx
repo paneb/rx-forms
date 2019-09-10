@@ -3,7 +3,7 @@ import { useImperativeHandle} from 'react';
 
 import { renderLayout, BasicForm, BasicButtons} from './layouts';
 import { setValueAction, willValidateAllAction} from './actions';
-import {validationReducer, currentValuesReducer} from './reducers';
+import {validationReducer, currentValuesReducer, globalValidationReducer} from './reducers';
 
 import update from 'immutability-helper';
 
@@ -61,7 +61,8 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
     const rootReducer = combineReducers({
       values: currentValuesReducer,
       // initialValues: initialValuesReducer,
-      errors: validationReducer
+      errors: validationReducer,
+      validation: globalValidationReducer
     });
     
     ref.current.store = createStore(rootReducer, applyMiddleware(thunk))
@@ -78,7 +79,10 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
       console.log(`in submit call`);
 
       if(validate){
-        await store.dispatch(willValidateAllAction(model, validators, store.getState().values))
+        const result =  store.dispatch(willValidateAllAction(model, validators, store.getState().values))
+        console.log(`with validate result: `, result);
+        console.log(`with errors after validate: `, store.getState().errors);
+
       }
       return {
         values: store.getState().values,

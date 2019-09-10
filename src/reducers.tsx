@@ -9,10 +9,18 @@ import { AnyAction } from 'redux'
 //   }
 //   return state;
 // }
+export const globalValidationReducer = (state: any = {}, action: AnyAction) => {
 
+  if(action.type == "ALL_FIELD_VALIDATION"){
+    console.log(`in globalValidationReducer reducer`)
+    return update(state ? state : {}, {$set: true});
+  }
+  return state
+}
 
 export const currentValuesReducer = (state: any = {}, action: AnyAction) => {
   console.log(`in state: `, state, ` with action: `, action);
+  console.log(`currentValuesReducer reducer`);
   if(action.type == "SET_VALUE"){
     return update(state ? state : {}, {[action.key]: {$set: action.value}})
   }
@@ -20,6 +28,8 @@ export const currentValuesReducer = (state: any = {}, action: AnyAction) => {
 }
 
 export const validationReducer = (state: any = {}, action: AnyAction) =>{
+
+  console.log(`validationReducer reducer`);
 
   if(action.type == "SINGLE_FIELD_VALIDATION"){
     console.log(`in validationReducer with `, action)

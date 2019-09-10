@@ -77,25 +77,12 @@ export const willValidateAction: any = (name: String, value: any, values: any, v
 
 const doValidateAllFields: any = async (model: any, validatorsList: any, values: any) => {
 
-  // const errors = model.groups.map(async (field: any, _index: any, values: any)=>{
-
-  //   console.log(`with value: `, field.name, ` and key: `, _index);
-  //   //TODO: models.groups is a list, not an object.
-
-  //   const fieldValidator = field.validators ? field.validators : [];
-  //   const fieldErrors =  await doSingleFieldValidation(field.name, field.value, values, fieldValidator, validatorsList, ()=>{})
-
-  //   console.log(`after fieldError with `, field.name, ` `, fieldErrors);
-  //   return {[field.name]: fieldErrors}
-
-  // })
-
   var errors = {};
 
   for(var i: number = 0; i < model.groups.length; i++){
     const field = model.groups[i];
     const fieldValidator = field.validators ? field.validators : [];
-    const fieldErrors =  await doSingleFieldValidation(field.name, field.value, values, fieldValidator, validatorsList, ()=>{})
+    const fieldErrors =  await doSingleFieldValidation(field.name, values[field.name], values, fieldValidator, validatorsList, ()=>{})
     console.log(`after fieldError with `, field.name, ` `, fieldErrors);
     errors[field.name] = fieldErrors;
   }
