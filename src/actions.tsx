@@ -1,4 +1,4 @@
-var lo = require('lodash');
+// var lo = require('lodash');
 
 const doSingleFieldValidation: any = async (name: String, value: any, values: any, validators: any, validatorsList: any, setOnValidation: any) => {
 
@@ -75,22 +75,49 @@ export const willValidateAction: any = (name: String, value: any, values: any, v
 
 }
 
+const doValidateAllFields: any = async (model: any, validatorsList: any, values: any) => {
+
+  // const errors = model.groups.map(async (field: any, _index: any, values: any)=>{
+
+  //   console.log(`with value: `, field.name, ` and key: `, _index);
+  //   //TODO: models.groups is a list, not an object.
+
+  //   const fieldValidator = field.validators ? field.validators : [];
+  //   const fieldErrors =  await doSingleFieldValidation(field.name, field.value, values, fieldValidator, validatorsList, ()=>{})
+
+  //   console.log(`after fieldError with `, field.name, ` `, fieldErrors);
+  //   return {[field.name]: fieldErrors}
+
+  // })
+
+  var errors = {};
+
+  for(var i: number = 0; i < model.groups.length; i++){
+    const field = model.groups[i];
+    const fieldValidator = field.validators ? field.validators : [];
+    const fieldErrors =  await doSingleFieldValidation(field.name, field.value, values, fieldValidator, validatorsList, ()=>{})
+    console.log(`after fieldError with `, field.name, ` `, fieldErrors);
+    errors[field.name] = fieldErrors;
+  }
+  console.log(`end of doValidateAllFields`);
+  return errors;
+
+}
+
 export const willValidateAllAction: any = (model: any, validatorsList: any, values: any) => {
 
-  const errors = lo.map(values, async (value: any, key: any, values: any)=>{
-
-    console.log(`with value: `, value, ` and key: `, key);
-    //TODO: models.groups is a list, not an object.
-
-    const fieldValidator = model.groups[key].validators ? model.groups[key].validators : [];
-    const fieldErrors =  await doSingleFieldValidation(key, value, values, fieldValidator, validatorsList, false)
-    return {[value.name]: fieldErrors}
-
-  })
+  console.log(`in willValidateAllAction with model `, model);
 
   return (dispatch: any) => {
 
-    dispatch(didValidateAllAction(values, errors));
+    doValidateAllFields(model, validatorsList, values)
+    .then((errors: any)=>{
+
+      console.log(`before dispatch with errors: `, errors);
+      dispatch(didValidateAllAction(values, errors));
+  
+    });
+  
   }
 
 }
@@ -99,11 +126,3 @@ const didValidateAllAction: any = (values: any, errors: any) => {
 
   return { type: "ALL_FIELD_VALIDATION", values, errors}
 }
-
-// export const setInitialValue: any = (key: String, value: any) => {
-//   return {
-//     type: "INITIAL_VALUE",
-//     key,
-//     value
-//   }
-// }

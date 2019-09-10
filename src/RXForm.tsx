@@ -74,11 +74,11 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
       console.log(`called test`); 
       return {test: "pippo"}
     },
-    submit: (validate = false) => {
+    submit: async (validate = false) => {
       console.log(`in submit call`);
 
       if(validate){
-        store.dispatch(willValidateAllAction(model, validators, store.getState().values))
+        await store.dispatch(willValidateAllAction(model, validators, store.getState().values))
       }
       return {
         values: store.getState().values,
