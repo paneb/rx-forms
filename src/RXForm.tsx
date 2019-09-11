@@ -79,8 +79,8 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
       console.log(`in submit call`);
 
       if(validate){
-        const result =  store.dispatch(willValidateAllAction(model, validators, store.getState().values))
-        console.log(`with validate result: `, result);
+        const [values, errors] =  await store.dispatch(willValidateAllAction(model, validators, store.getState().values))
+        console.log(`with validate result: `, values, errors);
         console.log(`with errors after validate: `, store.getState().errors);
 
       }

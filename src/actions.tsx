@@ -97,13 +97,18 @@ export const willValidateAllAction: any = (model: any, validatorsList: any, valu
 
   return (dispatch: any) => {
 
-    doValidateAllFields(model, validatorsList, values)
-    .then((errors: any)=>{
+    const resultPromise = new Promise((resolve, _reject)=>{
 
-      console.log(`before dispatch with errors: `, errors);
-      dispatch(didValidateAllAction(values, errors));
-  
-    });
+      doValidateAllFields(model, validatorsList, values)
+      .then((errors: any)=>{
+
+        console.log(`before dispatch with errors: `, errors);
+        dispatch(didValidateAllAction(values, errors));
+        resolve([values, errors]);
+      });
+    })
+
+    return resultPromise
   
   }
 
