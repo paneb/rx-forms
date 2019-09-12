@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useImperativeHandle} from 'react';
 
 import { renderLayout, BasicForm, BasicButtons} from './layouts';
-import { setValue as setValueAction} from './actions';
-import {validationReducer, initialValuesReducer, currentValuesReducer} from './reducers';
+import { setValueAction, willValidateAllAction} from './actions';
+import {validationReducer, currentValuesReducer, globalValidationReducer} from './reducers';
 
 import update from 'immutability-helper';
 
@@ -23,6 +23,7 @@ interface RXFormsProps {
   model: any,
   data: {String: any},
   validators: any,
+  formParams: any
 }
 
 interface ReactRef {
@@ -37,8 +38,10 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   const formComponent = props.formComponent ? props.formComponent : BasicForm;
   const validators = props.validators ? update(baseValidators, {$merge: props.validators}) : baseValidators;
   const buttonsComponent = props.buttonsComponent ? props.buttonsComponent : BasicButtons;
+  const formParams = props.formParams ? props.formParams : {}
 
   const events = props.events ? update(baseEvents, {$merge: props.events}) : baseEvents;
+
   var store: any = null;
   //Make store once
   // const ref = useRef();
@@ -60,8 +63,9 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
 
     const rootReducer = combineReducers({
       values: currentValuesReducer,
-      initialValues: initialValuesReducer,
-      errors: validationReducer
+      // initialValues: initialValuesReducer,
+      errors: validationReducer,
+      validation: globalValidationReducer
     });
     
     ref.current.store = createStore(rootReducer, applyMiddleware(thunk))
@@ -74,8 +78,15 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
       console.log(`called test`); 
       return {test: "pippo"}
     },
-    submit: () => {
+    submit: async (validate = false) => {
       console.log(`in submit call`);
+
+      if(validate){
+        const [values, errors] =  await store.dispatch(willValidateAllAction(model, validators, store.getState().values))
+        console.log(`with validate result: `, values, errors);
+        console.log(`with errors after validate: `, store.getState().errors);
+
+      }
       return {
         values: store.getState().values,
         errors: store.getState().errors
@@ -120,7 +131,7 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   return (
     <>
       <Provider store={ref.current.store}>
-        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, validators, store})}
+        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, validators, store, formParams})}
       </Provider>
     </>
   );
