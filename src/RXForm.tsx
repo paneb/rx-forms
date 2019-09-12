@@ -23,6 +23,7 @@ interface RXFormsProps {
   model: any,
   data: {String: any},
   validators: any,
+  formParams: any
 }
 
 interface ReactRef {
@@ -37,8 +38,10 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   const formComponent = props.formComponent ? props.formComponent : BasicForm;
   const validators = props.validators ? update(baseValidators, {$merge: props.validators}) : baseValidators;
   const buttonsComponent = props.buttonsComponent ? props.buttonsComponent : BasicButtons;
+  const formParams = props.formParams ? props.formParams : {}
 
   const events = props.events ? update(baseEvents, {$merge: props.events}) : baseEvents;
+
   var store: any = null;
   //Make store once
   // const ref = useRef();
@@ -128,7 +131,7 @@ export const RXForm: React.FC<RXFormsProps> = React.forwardRef((props: RXFormsPr
   return (
     <>
       <Provider store={ref.current.store}>
-        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, validators, store})}
+        {renderLayout({layouts, formComponent, components, model, buttonsComponent, events, validators, store, formParams})}
       </Provider>
     </>
   );

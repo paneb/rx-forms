@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any, components:any, validators:any, buttonsComponent:any, events: any, store: any}> = (props) => {
+export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any, components:any, validators:any, buttonsComponent:any, events: any, store: any, formParams: any}> = (props) => {
 
     const ButtonsComponent = props.buttonsComponent;
 
@@ -16,18 +16,18 @@ export const renderLayout: React.SFC<{model:any, formComponent:any, layouts:any,
             const FormComponent = props.formComponent;
 
             return (
-                <FormComponent>
-                    <Layout model={props.model} events={props.events} components={props.components} store={props.store} validators={props.validators}/>
-                    <ButtonsComponent model={props.model} events={props.events}/>
-                </FormComponent>    
+                <FormComponent formParams={props.formParams}>
+                    <Layout model={props.model} events={props.events} components={props.components} store={props.store} validators={props.validators} formParams={props.formParams}/>
+                    <ButtonsComponent model={props.model} events={props.events} formParams={props.formParams}/>
+                </FormComponent>
             )
     
         }else{
 
             return (
                 <form>
-                    <Layout model={props.model} components={props.components} store={props.store} validators={props.validators}/>
-                    <ButtonsComponent model={props.model} events={props.events}/>
+                    <Layout model={props.model} components={props.components} store={props.store} validators={props.validators} formParams={props.formParams}/>
+                    <ButtonsComponent model={props.model} events={props.events} formParams={props.formParams}/>
                 </form>
             )
     
