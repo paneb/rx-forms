@@ -1,4 +1,6 @@
-# rx-core
+# rx-forms
+
+Rx-Forms is a library for forms on react that uses hooks and allows the simple definition of a form through a json model.
 
 > test lib
 
@@ -7,10 +9,16 @@
 ## Install
 
 ```bash
-npm install --save rx-core
+npm install --save rx-forms
 ```
 
-## Usage
+or using yarn
+
+```bash
+yarn add rx-forms
+```
+
+## Simple Usage
 
 ```tsx
 import * as React from 'react'
