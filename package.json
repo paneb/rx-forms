@@ -25,13 +25,17 @@
     "@types/react-redux": "^7.1.1",
     "@types/redux": "^3.6.0",
     "immutability-helper": "^3.0.1",
+    "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",
+    "mem": "^5.1.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "rollup-plugin-typescript3": "^1.1.2",
+    "set-value": "^3.0.1",
+    "webpack-dev-server": "3.1.11",
     "yarn": "^1.17.3"
   },
   "peerDependencies": {
