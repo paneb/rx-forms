@@ -36,7 +36,7 @@
     "rollup-plugin-typescript3": "^1.1.2",
     "set-value": "^3.0.1",
     "webpack-dev-server": "3.1.11",
-    "yarn": "^1.17.3"
+    "yarn": "^1.22.0"
   },
   "peerDependencies": {
     "prop-types": "^15.5.4",
