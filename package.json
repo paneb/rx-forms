@@ -34,7 +34,7 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "rollup-plugin-typescript3": "^1.1.2",
-    "set-value": "^3.0.1",
+    "set-value": "^4.0.1",
     "webpack-dev-server": "3.1.11",
     "yarn": "^1.17.3"
   },
